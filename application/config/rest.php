@@ -1,0 +1,30 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+$config['rest_default_format'] = 'json';
+$config['rest_ip_whitelist'] = '';
+$config['rest_ip_whitelist_enabled'] = FALSE;
+$config['rest_ip_blacklist_enabled'] = TRUE;
+$config['rest_ip_blacklist'] = '';
+$config['enable_emulate_request'] = TRUE;
+$config['rest_realm'] = 'CARD CHANGE API';
+$config['rest_auth'] = FALSE;
+$config['rest_valid_logins'] = array('admin' => '1234');
+$config['rest_use_mongodb'] = TRUE;
+$config['rest_database_group'] = 'default';
+$config['rest_mongodb_group']  = 'db_doicard';
+$config['rest_keys_table'] = 'api_keys';
+$config['rest_keys_collection'] = 'api_keys';
+$config['rest_enable_keys'] = TRUE;
+$config['rest_key_length'] = 100;
+$config['rest_key_name'] = 'API-DOICARD-V1';
+$config['rest_logs_table'] = 'api_logs';
+$config['rest_logs_collection'] = 'api_logs';
+$config['rest_reponse_collection'] = 'logs_reponse';
+$config['rest_enable_logging'] = TRUE;
+$config['rest_limits_table'] = 'api_limits';
+$config['rest_limits_collection'] = 'api_limits';
+$config['rest_enable_limits'] = TRUE;
+$config['rest_ignore_http_accept'] = TRUE;
+$config['rest_ajax_only'] = FALSE;
+$config['private_key'] = 'MIIJRAIBADANBgkqhkiG9w0BAQEFAASCCS4wggkqAgEAAoICAQCs4hvT5V6LXEql';

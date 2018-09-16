@@ -1,0 +1,11 @@
+INSTALL REDIS
+
+INSTALL MONOGODB
+sudo pecl install mongo
+sudo pecl install redis
+
+command redis set: 
+	auth: CONFIG SET requirepass 112233fF
+
+api_merchant
+api_user {}

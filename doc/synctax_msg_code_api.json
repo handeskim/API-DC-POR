@@ -1,0 +1,172 @@
+{
+	"code":[{
+		"1000":"command successful",
+		"2000":"error syntax command",
+		"2001":"error syntax method",
+		"2100":"username syntax method or already exits",
+		"2101":"user_domain syntax or not found, user_domain validator correct domain already exits",
+		"2102":"Password syntax method or Password Length is greater than 6",
+		"2013":"Email syntax method or Validator",
+		"2020":"zone  already exits",
+		"2021":"zone  not found",
+		"2031":"name record not founds",
+		"2032":"type record not founds",
+		"2033":"data record not founds",
+		"2034":"aux not founds",
+		"2035":"record  already exits",
+		"2040":"Login false",
+		"3000":"error syntax key api",
+		"3001":"not found key api",
+		"9999":"error syntax not method command",
+	}]
+	
+	"command_clients":
+	[{
+		"server","http://192.168.1.221",
+		"url":"/apps/apps/api/client",
+		"method":"POST",
+		"key":"API DNS KEY BY UGROUP SIGN",
+	}]
+	["cmd":{
+		"CreateNewClients":"Tạo mới tài khoản khách hàng",
+		[{
+			"data" :[{
+				"username"  :"domain_name {ugroup.asia}",
+				"user_domain"  :"domain_name {ugroup.asia}",
+				"password"  :"123456790zcbnm  String greater than 6 characters",
+				"email"  :"Email Validator {info@ugroup.asia}",
+				"phone"  :"null or 01234-111-777",
+				"auth"  :"null or String less than 30 characters",
+			}]
+		}]
+		"DeletelClients":"xóa tài khoản khách hàng",
+		[{
+			"data" :[{"id_clients"  :"core_encrypt_convert("599a17b245fbbe021e8b457d")",}]
+		}]
+		"UpdateClients":"cập nhập tài khoản khách hàng",
+		{
+			"cmd_sub":[{
+				"UpdateEmail":"Cập nhập lại email",
+				[{
+				"data" :
+					"id_clients"  :core_encrypt_convert("599a180245fbbe001e8b4580"),
+					"cmd_sub"  :"UpdateEmail",
+					"email"  :"0932337122",
+				}]
+				"UpdatePassword":"Cập nhập mật khẩu",
+				[{
+				"data" :
+					"id_clients"  :core_encrypt_convert("599a180245fbbe001e8b4580"),
+					"cmd_sub"  :"UpdatePassword",
+					"password"  :"password",
+				}]
+				"UpdatePhone":"Cập nhập Phone",
+				[{
+				"data" :
+					"id_clients"  :core_encrypt_convert("599a180245fbbe001e8b4580"),
+					"cmd_sub"  :"UpdatePhone",
+					"phone"  :"phone",
+				}]
+				"UpdateAuth":"Cập nhập Auth",{"note_title":"auth không cần dữ liệu chỉ cần lệnh cmd_sub:UpdateAuth",}
+				[{
+				"data" :
+					"id_clients"  :core_encrypt_convert("599a180245fbbe001e8b4580"),
+					"cmd_sub"  :"UpdateAuth",
+				}]
+			}]
+		}
+		"HoldClients":"tạm ngưng tài khoản khách hàng",
+		[{
+			"data" :[{"id_clients"  :"core_encrypt_convert("599a17b245fbbe021e8b457d")",}]
+		}]
+		"UnHoldClients":"mở lại tài khoản khách hàng",
+		[{
+			"data" :[{"id_clients"  :"core_encrypt_convert("599a17b245fbbe021e8b457d")",}]
+		}]
+		"InfoClients":"Lấy thông tài khoản khách hàng",
+		[{
+			"data" :[{"id_clients"  :"core_encrypt_convert("599a17b245fbbe021e8b457d")",}]
+		}]
+		"TransferClients":"chuyển đổi nhà quản lý tài khoản khách hàng",
+		[{
+			"data" :[{
+				"id_clients"  :"core_encrypt_convert("599a17b245fbbe021e8b457d")",
+				"name_reseller"  :"{ureg} tên đại lý mà chúng tôi quản lý {bạn chỉ có thể chuyển sang các đại lý cùng hệ thống đang được ureg quản lý và cấp phép}",
+				"sub_cmd" :{"ok","approved","reject",{"server auto transfer > 5 request":"pendding"},
+			}]
+		}]
+	}]
+	"command_zone":
+	[{
+		"server","http://192.168.1.221",
+		"url":"/apps/apps/api/zone",
+		"method":"POST",
+		"key":"API DNS KEY BY UGROUP SIGN",
+	}]
+	["cmd":{
+		"CreateNewZone":"Tạo mới một zone",
+		[{
+			"data" :[{
+				"name_zone"  :" example.com {xác đinh bởi tài khoan dang ky user_domain}",
+			}]
+		}]
+		"DeletelZone":"xóa một zone",
+		[{
+			"data" :[{
+				"id_zone"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+			}]
+		}]
+		"HoldZone":"tạm ngưng một zone",
+		[{
+			"data" :[{
+				"id_zone"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+			}]
+		}]
+		"InfoZone":"lấy thông tin một zone",
+		[{
+			"data" :[{
+				"id_zone"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+			}]
+		}]
+	}]
+	"command_record":
+	[{
+		"server","http://192.168.1.221",
+		"url":"/apps/apps/api/record",
+		"method":"POST",
+		"key":"API DNS KEY BY UGROUP SIGN",
+	}]
+	["cmd":{
+		"CreateNewRecord":"Tạo mới một record",
+		[{
+			"data" :[{
+				"id_zone"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+				"name_record": "validator according type_record",
+				"type_record": "[{A,CNAME,MX,NS,AAAA,TXT}]",
+				"data_record": "validator according type_record",
+				"aux": "{danh cho MX la {5,10,15,20,25,30} default aux la 10",
+			}]
+		}]
+		"DeletelRecord":"xóa bỏ một record",
+		"data" :[{
+				"id_record"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+			}]
+		"InfoRecord":"lấy thông tin một record",
+		"data" :[{
+				"id_record"  : "core_encrypt_convert("599a17b245fbbe021e8b457d")",
+			}]
+	}]
+	
+	"command_get_encrypt_convert":
+	[{
+		"server","http://192.168.1.221",
+		"url":"/apps/apps/api/encrypt",
+		"method":"POST",
+		"key":"API DNS KEY BY UGROUP SIGN",
+	}]
+	["cmd":{
+		"CreateEncrypt":"Tạo mới chuỗi khóa",
+		"data" : "string";
+	}]
+}
+

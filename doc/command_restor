@@ -1,0 +1,1 @@
+mongorestore --db mydbname --collection mycollection dump/mydbname/mycollection.bson
