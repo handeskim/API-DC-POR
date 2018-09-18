@@ -737,6 +737,15 @@ class Core extends MY_Controller {
 		}catch (Exception $e) { $this->transfer_p; }
 		return $this->transfer_p;
 	}
+	public function _rose_partner(){
+			try{
+			$obj_core = $this->mongo_db->select(array('rose_partner'))->get('config');
+			if(!empty($obj_core)){
+				return (int)$obj_core[0]['rose_partner'] / 100;
+			}
+		}catch (Exception $e) { $this->transfer_p; }
+		return $this->transfer_p;
+	}
 	public function _transfer_fee(){
 			try{
 			$obj_core = $this->mongo_db->select(array('transfer'))->get('config');

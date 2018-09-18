@@ -8,7 +8,10 @@ class User extends REST_Controller {
 		$this->apps = new core;
 		$this->params = array();
 		$this->resller = array();
+		$this->px = array();
+		$this->client_id = null;
 		$this->param = array();
+		$this->pub = array();
 		$this->_level = $this->apps->_level_api($this->_api_key());
 		$this->_role = $this->apps->_role($this->_api_key());
 		$this->r = $this->apps->_msg_response(200);
@@ -239,6 +242,31 @@ class User extends REST_Controller {
 		}else{ $this->r = $this->apps->_msg_response(1001);}
 		$this->response($this->r);
 	}
+	public function Passwdupdate_get(){
+		$this->apps->_logs_user_api($_GET,'update_get');
+		if(!empty($this->_level)){
+				if(!empty($this->_role)){
+					if((int)$this->_level == 2 || (int)$this->_level == 3){
+						if((int)$this->_role == 1 || (int)$this->_role == 2 || (int)$this->_role == 2){
+							if(!empty($_GET['param'])){
+								$p = $this->apps->_params($_GET['param'],$this->_api_key());
+								if(!empty($p->client_id)){
+									if(!empty($p->token)){
+										if(!empty($p->password)){
+											$this->params  = $this->apps->_users_update($p);
+											if(!empty($this->params)){
+												$this->r = $this->apps->_result(1000,array($this->params),$this->_api_key());
+											}else{ $this->r = $this->apps->_msg_response(2013);}	
+										}else{ $this->r = $this->apps->_msg_response(2008);}
+									}else{ $this->r = $this->apps->_msg_response(2011);}
+								}else{ $this->r = $this->apps->_msg_response(2000);}
+							}else{ $this->r = $this->apps->_msg_response(2000);}
+						}else{ $this->r = $this->apps->_msg_response(1002);}
+					}else{ $this->r = $this->apps->_msg_response(1001);}
+				}else{ $this->r = $this->apps->_msg_response(1002);}
+		}else{ $this->r = $this->apps->_msg_response(1001);}
+		$this->response($this->r);
+	}
 	public function login_get(){
 		$this->apps->_logs_user_api($_GET,'login_get');
 		if(!empty($this->_level)){
@@ -265,15 +293,11 @@ class User extends REST_Controller {
 		$this->response($this->r);
 	}
 	public function create_get(){
-
 		$this->apps->_logs_user_api($_GET,'create_get');
-	
 		if((int)$this->_level == 2 || (int)$this->_level == 3){
 			if((int)$this->_role == 1 || (int)$this->_role == 2 ){
-							
 				if(!empty($_GET['param'])){								
 					$p = $this->apps->_params($_GET['param'],$this->_api_key());
-							
 					if(!empty($p->email) || !empty($p->username) || !empty($p->password) || !empty($p->auth) || !empty($p->phone) || !empty($p->full_name) ){
 						if(email_regex($p->email)==true){
 							if(strlen($p->password) > 5 || strlen($p->password) < 32){
@@ -300,8 +324,8 @@ class User extends REST_Controller {
 													'country'=> $country,
 													'balancer'=> 0,
 													'birthday'=> $birthday,
-													'date_create'=>date('Y-m-d H:i:s'),
-													'time_crate'=>time(),
+													'date_create'=> date('Y-m-d H:i:s',time()),
+													'time_crate'=> time(),
 													'avatar'=> $avatar,
 													'role'=> 4,
 													'status'=> true,
@@ -310,8 +334,47 @@ class User extends REST_Controller {
 													'rose'=> 0,
 													'reseller'=> $resller,
 												);
+												
+												if(isset($p->partner)){
+													if(!empty($p->partner)){
+														$partner = $this->mongo_db->where(array('_id' => new \MongoId($p->partner)))->get('ask_users');
+														if(!empty($partner)){ $this->param['partner'] = $p->partner;}
+													}
+												}
+												
 												$this->params = $this->apps->_action_insert_user($this->param);
+												
 												if(!empty($this->params)){
+													if(isset($p->partner)){
+														if(!empty($p->partner)){
+															$partner = $this->mongo_db->where(array('_id' => new \MongoId($p->partner)))->get('ask_users');
+															if(!empty($partner)){ 
+																$this->client_id = getObjectid($this->params);
+																
+																$this->pub['partner'] = $p->partner;
+																$this->pub['reseller'] = $resller;
+																$this->pub['client_id'] = $this->client_id;
+																$this->pub['full_name'] = $p->full_name;
+																$this->pub['email'] = $p->email;
+																$this->pub['phone'] = $p->phone;
+																$this->pub['levels'] = 1;
+																$this->pub['username'] = $p->username;
+																$this->pub['date_create'] = date('Y-m-d H:i:s',time());
+																$this->pub['time_create'] = time();
+																$this->pub['balancer'] = 0;
+																$this->pub['ip'] = $this->input->ip_address();
+															
+																$this->px = $this->mongo_db->insert('publisher',$this->pub);
+																if(!empty($this->px)){
+																	$update_publicer = array(
+																		'publisher' => getObjectid($this->px),
+																		'partner' => $p->partner,
+																	);
+																	$this->mongo_db->where(array('_id' => new \MongoId($this->client_id)))->set($update_publicer)->update('ask_users');
+																}
+															}
+														}
+													}
 													$this->r = $this->apps->_result(1000,array($this->params),$this->_api_key());
 												}else{ $this->r = $this->apps->_msg_response(199);}
 											}else{ $this->r = $this->apps->_msg_response(2012);}

@@ -128,7 +128,9 @@ class Publisher_cms extends REST_Controller {
 										$username = $v_publisher['username'];
 										$email = $v_publisher['email'];
 										$full_name = $v_publisher['full_name'];
+										$partner = $v_publisher['partner'];
 										$levels = (int)$v_publisher['levels'];
+										$rose_partner = $this->apps->_rose_partner();
 										if($levels == 1){
 											$rose = $this->apps->_rose_client();
 										}else if($levels == 2){
@@ -177,13 +179,16 @@ class Publisher_cms extends REST_Controller {
 												'transaction_card' => $v_cart['transaction_card'],
 											);
 										}
+										$total_rose = array_sum($card_change_rose) + array_sum($cart_rose);
 										$card_total[] = array(
 											'full_name' => $full_name,
 											'username' => $username,
 											'client_id' => $client_id,
+											'partner' => $partner,
 											'cart_rose' => array_sum($cart_rose),
 											'card_change_rose' => array_sum($card_change_rose),
-											'total_rose' => array_sum($card_change_rose) + array_sum($cart_rose),
+											'total_rose' => $total_rose,
+											'total_rose_partner' => $total_rose * $rose_partner,
 											'date_start' => $dstart,
 											'time_start' => $date_start,
 											'time_end' => $date_end,
@@ -312,6 +317,7 @@ class Publisher_cms extends REST_Controller {
 									foreach($k as $v){
 										if(!empty($v['date_create'])){ $date_create = $v['date_create'];}else{$date_create = null;}
 										if(!empty($v['client_id'])){ $client_id = $v['client_id'];}else{$client_id = null;}
+										if(!empty($v['partner'])){ $partner = $v['partner'];}else{$partner = null;}
 										if(!empty($v['full_name'])){ $full_name = $v['full_name'];}else{$full_name = null;}
 										if(!empty($v['username'])){ $username = $v['username'];}else{$username = null;}
 										if(!empty($v['email'])){ $email = $v['email'];}else{$email = null;}
@@ -319,6 +325,7 @@ class Publisher_cms extends REST_Controller {
 										$this->result[] = array(
 											'id'=> getObjectId($v['_id']),
 											'date_create' => $date_create,
+											'partner' => $partner,
 											'client_id' => $client_id,
 											'full_name' => $full_name,
 											'email' => $email,

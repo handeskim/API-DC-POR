@@ -14,6 +14,7 @@ class Documents extends REST_Controller {
 		$this->obj = array( );
 	}
 	public function index_get(){
+		$this->r['PHP_DEMO'] = base_url('example.zip');
 		$this->r['SERVER _ API'] = base_url('card');
 		$this->r['description'] = 'đặc tả kết nối hệ thống API';
 		$this->r['hello'] = $this->doc_hello();

@@ -622,6 +622,62 @@ class Site extends REST_Controller {
 		}
 		$this->response($this->r);
 	}
+	public function info_rose_partner_post(){
+		if(!empty($this->_level)){
+			if($this->_level == 2){
+				if($this->_role == 1 || $this->_role == 2){
+					$this->r = array(
+						'status' => true,
+						'rose_partner' => $this->apps->_rose_partner(),
+					);
+				}
+			}
+		}
+		$this->response($this->r);
+	}
+	public function info_transfer_wget_post(){
+		if(!empty($this->_level)){
+			if($this->_level == 2){
+				if($this->_role == 1 || $this->_role == 2){
+					$this->r = array(
+						'status' => true,
+						'transfer_fee' => $this->apps->_transfer_fee(),
+					);
+				}
+			}
+		}
+		$this->response($this->r);
+	}
+	public function info_client_fogot_post(){
+		if(!empty($this->_level)){
+			if($this->_level == 2){
+				if($this->_role == 1 || $this->_role == 2){
+					$p = $this->apps->_params($_POST['param'],$this->_api_key);
+					$this->objects = $this->mongo_db->where(array('email'=>$p->email))->get('ask_users');
+					if(!empty($this->objects[0])){
+						$this->r = array(
+							'status' => true,
+							'result' => $this->objects[0],
+						);
+					}
+				}
+			}
+		}
+		$this->response($this->r);
+	}
+	public function info_withdraw_wget_post(){
+		if(!empty($this->_level)){
+			if($this->_level == 2){
+				if($this->_role == 1 || $this->_role == 2){
+					$this->r = array(
+						'status' => true,
+						'withdrawal_fee' => $this->apps->_withdrawal_fee(),
+					);
+				}
+			}
+		}
+		$this->response($this->r);
+	}
 	public function config_update_get(){
 		if(!empty($this->_level)){
 			if($this->_level == 2){
@@ -633,6 +689,7 @@ class Site extends REST_Controller {
 						if(!empty($p->min_withdraw)){ $this->obj['min_withdraw'] = (int)$p->min_withdraw; }
 						if(!empty($p->rose_reseller)){ $this->obj['rose_reseller'] = (int)$p->rose_reseller; }
 						if(!empty($p->rose_client)){ $this->obj['rose_client'] = (int)$p->rose_client; }
+						if(!empty($p->rose_partner)){ $this->obj['rose_partner'] = (int)$p->rose_partner; }
 						if(!empty($p->keys)){
 							$this->result = $this->mongo_db->where(array('_id' => new \MongoId($p->keys),))->set($this->obj)->update('config');
 							$this->r = array('status'=>1000, "result"=> $this->result);
@@ -658,7 +715,7 @@ class Site extends REST_Controller {
 						if(!empty($p->email_brand)){ $this->obj['email_brand'] = (string)$p->email_brand; }
 						if(!empty($p->smtp_host)){ $this->obj['smtp_host'] = (string)$p->smtp_host; }
 						if(!empty($p->smtp_port)){ $this->obj['smtp_port'] = (string)$p->smtp_port; }
-						if(!empty($p->smtp_crypto)){ $this->obj['smtp_crypto'] = (int)$p->smtp_crypto; }
+						if(!empty($p->smtp_crypto)){ $this->obj['smtp_crypto'] = (string)$p->smtp_crypto; }
 						if(!empty($p->smtp_user)){ $this->obj['smtp_user'] = (string)$p->smtp_user; }
 						if(!empty($p->smtp_password)){ $this->obj['smtp_password'] = (string)$p->smtp_password; }
 						if(!empty($p->address_brand)){ $this->obj['address_brand'] = (string)$p->address_brand; }
