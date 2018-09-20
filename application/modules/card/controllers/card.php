@@ -16,7 +16,7 @@ class Card extends REST_Controller {
 		$this->obj = array();
 		$this->_param = array();
 	}
-		public function index_get(){
+	public function index_get(){
 		if(!empty($this->_level)){
 			if(!empty($this->_role)){
 				if((int)$this->_level == 2 || (int)$this->_level == 3 || (int)$this->_level == 4){
@@ -39,9 +39,14 @@ class Card extends REST_Controller {
 													$this->param['publisher'] = $publisher;
 													$this->param['client_id'] = $client_id; 
 													$this->param['time_tracking'] = time(); 
-													$this->obj = $this->apps->_Service_Card_Change_Sendding($this->param);
-													$this->r = $this->apps->_msg_response(10000);
-													$this->r['result'] = $this->obj;
+													$check_seri = $this->check_seri($this->param);
+													if($check_seri==true){
+															$this->obj = $this->apps->_Service_Card_Change_Sendding($this->param);
+															$this->r = $this->apps->_msg_response(10000);
+															$this->r['result'] = $this->obj;
+													}else{ 
+														 $this->r = $this->apps->_msg_response(4026);
+													}
 												}else{ $this->r = $this->apps->_msg_response(4014);}
 											}else{ $this->r = $this->apps->_msg_response(4013);}
 										}else{ $this->r = $this->apps->_msg_response(4016);}
@@ -55,7 +60,24 @@ class Card extends REST_Controller {
 		$this->response($this->r);
 	}
 	
-	
+	private function check_seri($p){
+		$card_type = $p['card_type'];
+		$card_seri = $p['card_seri'];
+		$check_block_seri = $this->mongo_db->where(array('card_seri'=>$card_seri,'card_type'=>$card_type))->get('block_seri_card');
+		if(empty($check_block_seri)){
+			$client_id = $p['client_id'];
+			$check_seri_database =  $this->mongo_db->where(array('card_seri'=>$card_seri,'transaction_card'=>'done','card_type'=>$card_type))->get('log_card_change');
+			if(empty($check_seri_database)){
+				$block_seri = $this->mongo_db->where(array('card_seri'=>$card_seri,'transaction_card'=>'reject','card_type'=>$card_type))->get('log_card_change');
+				if(!empty($block_seri)){
+					if(count($block_seri) > 5){
+						$this->mongo_db->insert('block_seri_card',array('card_seri'=>$card_seri,'card_type'=>$card_type,'time_create'=>time(),'client_id'=>$client_id));
+						return false;
+					}else{ return true;}
+				}else{ return true; }
+			}else{ return false; }
+		}else{ return false; }
+	}
 }
 
 

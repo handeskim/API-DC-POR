@@ -275,6 +275,7 @@ class User extends REST_Controller {
 						if((int)$this->_role == 1 || (int)$this->_role == 2 || (int)$this->_role == 2){
 							if(!empty($_GET['param'])){
 								$p = $this->apps->_params($_GET['param'],$this->_api_key());
+							
 									if(!empty($p->token)){
 											if(!empty($p->username)){
 												if(!empty($p->password)){
