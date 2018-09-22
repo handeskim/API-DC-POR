@@ -1,0 +1,1 @@
+mongorestore --port <port number> <path to the backup>

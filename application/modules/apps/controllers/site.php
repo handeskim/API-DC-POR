@@ -455,6 +455,13 @@ class Site extends REST_Controller {
 		}
 		$this->response($this->r);
 	}
+	public function load_bycardGame_post(){
+		$this->obj = $this->mongo_db->where(array('status'=>'active','types'=>"GAME"))->order_by(array('ProductCode' => 'ASC'))->get("Telco");
+		if(!empty($this->obj)){
+			$this->r['result'] = $this->obj;
+		}
+		$this->response($this->r);
+	}
 	public function load_bycard_telco_info_post(){
 		$p = $this->apps->_params($_POST['param'],$this->_api_key);
 		$this->obj = $this->mongo_db->where(array('_id' => new \MongoId($p->keys),'status'=>'active'))->get("Telco");
@@ -472,6 +479,13 @@ class Site extends REST_Controller {
 	}
 	public function site_load_bycard_post(){
 		$this->obj = $this->mongo_db->where(array('status'=>'active','types'=>"DT"))->order_by(array('type' => 'ASC',))->get("Telco");
+		if(!empty($this->obj)){
+			$this->r['result'] = $this->obj;
+		}
+		$this->response($this->r);
+	}
+	public function site_load_bycardmage_post(){
+		$this->obj = $this->mongo_db->where(array('status'=>'active','types'=>"GAME"))->order_by(array('type' => 'ASC',))->get("Telco");
 		if(!empty($this->obj)){
 			$this->r['result'] = $this->obj;
 		}
@@ -992,8 +1006,43 @@ class Site extends REST_Controller {
 							if(!empty($p->token)){
 									if(!empty($p->keys)){ 
 										$this->param['keys'] = $p->keys; 
+										$update_value = array();
 										if(!empty($p->status)){
-											$update = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set(array('status'=>$p->status))->update('card');
+											$update_value['status'] = $p->status;
+											if(!empty($p->deduct)){ 
+											$update_value['deduct'] = (float)$p->deduct;
+											}
+											$update = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set($update_value)->update('card');
+											if($update==true){
+												$this->r = $this->apps->_msg_response(1000);
+											}else{$this->r = $this->apps->_msg_response(2000);}
+										}else{$this->r = $this->apps->_msg_response(2000);}
+									}else{$this->r = $this->apps->_msg_response(2000);}
+							}else{ $this->r = $this->apps->_msg_response(2011);}
+						}else{ $this->r = $this->apps->_msg_response(2000);}
+					}else{ $this->r = $this->apps->_msg_response(1002);}
+				}else{ $this->r = $this->apps->_msg_response(1001);}
+			}else{ $this->r = $this->apps->_msg_response(1002);}
+		}else{ $this->r = $this->apps->_msg_response(1001);}
+		$this->response($this->r);
+	}	
+	public function card_buy_cms_edit_get(){
+		if(!empty($this->_level)){
+			if(!empty($this->_role)){
+				if((int)$this->_level == 2 || (int)$this->_level == 3){
+					if((int)$this->_role == 1 || (int)$this->_role == 2 || (int)$this->_role == 3){
+						if(!empty($_GET['param'])){
+							$p = $this->apps->_params($_GET['param'],$this->_api_key);
+							if(!empty($p->token)){
+									if(!empty($p->keys)){ 
+										$this->param['keys'] = $p->keys; 
+										$update_value = array();
+										if(!empty($p->status)){
+											$update_value['status'] = $p->status;
+											if(!empty($p->deduct)){ 
+											$update_value['deduct'] = (float)$p->deduct;
+											}
+											$update = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set($update_value)->update('Telco');
 											if($update==true){
 												$this->r = $this->apps->_msg_response(1000);
 											}else{$this->r = $this->apps->_msg_response(2000);}

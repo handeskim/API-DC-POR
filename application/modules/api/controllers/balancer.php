@@ -295,9 +295,11 @@ class Balancer extends REST_Controller {
 									$check_clients = array('_id' => new \MongoId($p->client_id),'reseller'=> $reseller,'auth'=> md5($p->auth),);
 									$client = $this->mongo_db->select(array('full_name','balancer','password'))->where($check_clients)->get('ask_users');
 									if(!empty($client)){
-										$check_beneficiary = array( '_id' => new \MongoId($p->beneficiary_id),);
+										$check_beneficiary = array( 'email' => $p->beneficiary_id,);
 										$beneficiary = $this->mongo_db->select(array('full_name'))->where($check_beneficiary)->get('ask_users');
+										
 										if(!empty($beneficiary)){
+											$beneficiary_id = getObjectId($beneficiary[0]["_id"]);
 											if(!empty($client[0]['balancer'])){
 												$balancer = (float)$client[0]['balancer'];
 												$fee = 	$this->apps->_transfer_fee();
@@ -316,7 +318,8 @@ class Balancer extends REST_Controller {
 														$this->confim['total_transfer'] = (int)$total_transfer;
 														$this->confim['balancer'] = (int)$balancer;
 														$this->confim['balancer_update'] = (int)$balancer_update;
-														$this->confim['beneficiary_id'] = $p->beneficiary_id;
+														$this->confim['beneficiary_email'] = $p->beneficiary_id;
+														$this->confim['beneficiary_id'] = $beneficiary_id;
 														$this->confim['beneficiary'] = $beneficiary[0]['full_name'];
 														$this->confim['client_id'] = getObjectId($client[0]['_id']);
 														$this->confim['client_name'] = $client[0]['full_name'];
