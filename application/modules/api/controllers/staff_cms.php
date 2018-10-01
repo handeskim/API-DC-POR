@@ -276,7 +276,45 @@ class Staff_cms extends REST_Controller {
 		}else{ $this->r = $this->apps->_msg_response(1001);}
 		$this->response($this->r);
 	}
-	
+	public function details_post(){
+		if(!empty($this->_level)){
+			if(!empty($this->_role)){
+				if((int)$this->_level == 2 || (int)$this->_level == 3){
+					if((int)$this->_role == 1 || (int)$this->_role == 2 || (int)$this->_role == 3){
+						if(!empty($_POST['param'])){
+							$p = $this->apps->_params($_POST['param'],$this->_api_key);
+							if(!empty($p->token)){
+								$this->reseller = $this->apps->_token_reseller($p->token);
+								if(!empty($p->date_start)){$dstart = date("Y-m-d ",strtotime($p->date_start)).'00:00:00';}else{$dstart = date("Y-m-d ",time()).'00:00:00';}
+								if(!empty($p->date_end)){$dend = date("Y-m-d ",strtotime($p->date_end)).'23:59:59';}else{$dend = date("Y-m-d ",time()).'23:59:59';}
+								$date_start = strtotime($dstart);
+								$date_end =  strtotime($dend);
+								///
+								$transfer_logs = array();
+								$withdrawn_logs = array();
+								$cart_logs = array();
+								$card_logs = array();
+								
+								$transfer_logs = $this->mongo_db->where('client_id',$p->client_id)->where_gte('time_create',$date_start)->where_lte('time_create',$date_end)->get('transfer_log');
+								$withdrawn_logs = $this->mongo_db->where('client_id',$p->client_id)->where_gte('time_create',$date_start)->where_lte('time_create',$date_end)->get('withdrawal');
+								$card_logs = $this->mongo_db->where('client_id',$p->client_id)->where_gte('time_create',$date_start)->where_lte('time_create',$date_end)->get('log_card_change');
+								$cart_logs = $this->mongo_db->where('client_id',$p->client_id)->where_gte('time_create',$date_start)->where_lte('time_create',$date_end)->get('cart');
+								
+								$this->result = array(
+									'transfer_logs' => $transfer_logs,
+									'withdrawn_logs' => $withdrawn_logs,
+									'cart_logs' => $cart_logs,
+									'card_logs' => $card_logs,
+								);
+								$this->r = array( 'status'=> $this->apps->_msg_response(1000), 'result'=> $this->result,);
+							}else{ $this->r = $this->apps->_msg_response(2011);}
+						}else{ $this->r = $this->apps->_msg_response(2000);}
+					}else{ $this->r = $this->apps->_msg_response(1002);}
+				}else{ $this->r = $this->apps->_msg_response(1001);}
+			}else{ $this->r = $this->apps->_msg_response(1002);}
+		}else{ $this->r = $this->apps->_msg_response(1001);}
+		$this->response($this->r);
+	}
 }
 
 

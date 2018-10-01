@@ -16,7 +16,7 @@ $config['enable_query_strings'] = FALSE;
 $config['controller_trigger']	= 'c';
 $config['function_trigger']		= 'm';
 $config['directory_trigger']	= 'd'; 
-$config['log_threshold'] = 1;
+$config['log_threshold'] = 0;
 $config['log_path'] = '';
 $config['log_date_format'] = 'd-M-Y H:i:s';
 $config['cache_path'] = '';
@@ -32,7 +32,7 @@ $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 86400;
 
 $config['cookie_prefix']	= "hk_";
-$config['cookie_domain']	= ".demo2308.handesk.xyz";
+$config['cookie_domain']	= "";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= TRUE;
 $config['global_xss_filtering'] = TRUE;

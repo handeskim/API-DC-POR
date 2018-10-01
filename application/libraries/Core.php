@@ -58,13 +58,12 @@ class Core extends MY_Controller {
 		}catch (Exception $e) { return $this->_msg_response(2000); }
 	}
 	public function _user_login($p){
-		
 		try{
 			$reseller = (string)$this->_token_reseller($p->token);
 			$this->obj_core = $this->mongo_db->where(array('username'=>$p->username,'password'=>md5($p->password),'reseller'=>$reseller,'status'=>true))->get('ask_users');
 			if(!empty($this->obj_core[0]['_id'])){
 					return $this->obj_core[0]['_id'];
-			}else{  return $this->_msg_response(1001); }
+			}else{  return $this->_msg_response(2000); }
 		}catch (Exception $e) { return $this->_msg_response(2000); }
 	}
 	public function _users_bank($p){
@@ -612,7 +611,11 @@ class Core extends MY_Controller {
 			$this->objects['card_status'] = $status['status'];
 			$this->objects['card_message'] = $status['msg'];
 			// $this->objects['tracking'] = $note;
+			if($this->obj->status==23){
+				$this->mongo_db->insert('block_seri_card',array('card_seri'=>$p['card_seri'],'card_type'=>(int)$p['card_type'],'time_create'=>time(),'client_id'=>$p['client_id']));
+			}
 			if($this->obj->status==2){
+				$this->mongo_db->insert('block_seri_card',array('card_seri'=>$p['card_seri'],'card_type'=>(int)$p['card_type'],'time_create'=>time(),'client_id'=>$p['client_id']));
 				///////////////////Client Info ////////////////////////////
 				$beneficiary_id = $p['client_id'];
 				$publisher_id = $p['publisher'];
@@ -662,7 +665,9 @@ class Core extends MY_Controller {
 				$this->objects['provinces_bank'] = 'In system';
 				$this->objects['branch_bank'] = 'In system';
 				$this->_transfer_plus($balancer_plus,$beneficiary_id,$this->objects);
+				
 				return $this->shopnapthe((int)$this->obj->status);
+				
 			}else{
 				$this->objects['transaction_service'] = $transaction_service;
 				$this->objects['transaction_card'] = 'reject';
