@@ -790,6 +790,7 @@ class Site extends REST_Controller {
 									foreach($k as $v){
 										if(!empty($v['rose'])){ $rose = $v['rose'];}else{$rose = null;}
 										if(!empty($v['deduct'])){ $deduct = $v['deduct'];}else{$deduct = null;}
+										if(!empty($v['deduct_vip'])){ $deduct_vip = $v['deduct_vip'];}else{$deduct_vip = null;}
 										if(!empty($v['status'])){ $status = $v['status'];}else{$status = null;}
 										if(!empty($v['card_type'])){ $card_type = $v['card_type'];}else{$card_type = null;}
 										if(!empty($v['name'])){ $name = $v['name'];}else{$name = null;}
@@ -800,6 +801,7 @@ class Site extends REST_Controller {
 											'id'=> getObjectId($v['_id']),
 											'rose' => $rose,
 											'deduct' => $deduct,
+											'deduct_vip' => $deduct_vip,
 											'card_type' => $card_type,
 											'name' => $name,
 											'type_id' => $type_id,
@@ -977,6 +979,7 @@ class Site extends REST_Controller {
 							if(!empty($p->token)){
 									if(!empty($p->rose)){ $this->param['rose'] = (float)$p->rose; }else{ $this->param['rose'] = 0;}
 									if(!empty($p->deduct)){ $this->param['deduct'] = (float)$p->deduct; }else{ $this->param['deduct'] = 0;}
+									if(!empty($p->deduct_vip)){ $this->param['deduct_vip'] = (float)$p->deduct_vip; }else{ $this->param['deduct_vip'] = 0;}
 									if(!empty($p->card_type)){ $this->param['card_type'] = (int)$p->card_type; }else{ $this->param['card_type'] = 100;}
 									if(!empty($p->name)){ $this->param['name'] = $p->name; }else{ $this->param['name'] = 100;}
 									if(!empty($p->type_id)){ $this->param['type_id'] = $p->type_id; }else{ $this->param['type_id'] = "5b916fc9f40e2ef99b80878c";}
@@ -1009,9 +1012,8 @@ class Site extends REST_Controller {
 										$update_value = array();
 										if(!empty($p->status)){
 											$update_value['status'] = $p->status;
-											if(!empty($p->deduct)){ 
-											$update_value['deduct'] = (float)$p->deduct;
-											}
+											if(!empty($p->deduct)){  $update_value['deduct'] = (float)$p->deduct;}		
+											if(!empty($p->deduct)){ $update_value['deduct_vip'] = (float)$p->deduct_vip;}
 											$update = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set($update_value)->update('card');
 											if($update==true){
 												$this->r = $this->apps->_msg_response(1000);

@@ -88,7 +88,64 @@ class Bycard extends REST_Controller {
 		}else{ $this->r = $this->apps->_msg_response(1001);}
 		$this->response($this->r);
 	}
-
+	public function game_post(){
+		if(!empty($this->_level)){
+			if(!empty($this->_role)){
+				if((int)$this->_level == 2 || (int)$this->_level == 3 || (int)$this->_level == 4){
+					if((int)$this->_role == 1 || (int)$this->_role == 2 || (int)$this->_role == 3 || (int)$this->_level == 4){
+						if(!empty($_POST['param'])){
+							$p = $this->apps->_params($_POST['param'],$this->_api_key);
+							if(!empty($p->token)){
+									if(!empty($p->CardPrice)){
+										if(!empty($p->CardQuantity)){
+											if(!empty($p->ProductCode)){
+												// if(!empty($p->Telco)){
+												if(!empty($p->RefNumber)){
+													$this->reseller = $this->apps->_token_reseller($p->token);
+														$this->param['reseller'] = $this->reseller;
+														if(!empty($p->client_id)){ $client_id = $p->client_id;}else{ $client_id = $this->reseller;}
+														if(!empty($p->publisher)){ $publisher = $p->publisher;}else{ $publisher = null; }
+														$this->param['publisher'] = $publisher;
+														$this->param['client_id'] = $client_id; 
+														$this->param['RefNumber'] = $p->RefNumber;
+														$this->param['CardPrice'] = $p->CardPrice;
+														$this->param['CardQuantity'] = $p->CardQuantity;
+														$this->param['ProductCode'] = $p->ProductCode;
+														// $this->param['Telco'] = $p->Telco;
+														$this->param['CustIP'] = $this->input->ip_address();
+														$this->param['note'] = handesk_encode(json_encode($this->param));
+														$Func = 'buyPrepaidCards';
+														$check_cart = $this->mongo_db->where(array('_id' => new \MongoId($p->RefNumber),'transaction_card'=>'hold'))->get('cart');
+														if(!empty($check_cart)){
+															$this->obj = $this->apps->_Service_Alego_ByCard_Sendding($this->param,$Func);
+															if(!empty($this->obj)){
+																$this->r = $this->apps->_msg_response(1000);
+																$this->r['trace'] = $this->obj;
+																$this->r['result'] = $this->obj;
+																$this->r['cart'] =  $p->RefNumber;
+															}else{ 
+																$this->r = $this->apps->_msg_response(4105);
+																$this->r['result'] = $this->obj;
+																$this->r['trace'] =  $p->RefNumber;
+															}
+														}else{
+																$this->r = $this->apps->_msg_response(4106);
+																$this->r['result'] = $this->obj;
+																$this->r['trace'] = $p->RefNumber;
+														}
+													}else{ $this->r = $this->apps->_msg_response(4104);}
+												// }else{ $this->r = $this->apps->_msg_response(4103);}
+											}else{ $this->r = $this->apps->_msg_response(4102);}
+										}else{ $this->r = $this->apps->_msg_response(4101);}
+									}else{ $this->r = $this->apps->_msg_response(4100);}
+							}else{ $this->r = $this->apps->_msg_response(2011);}
+						}else{ $this->r = $this->apps->_msg_response(2000);}
+					}else{ $this->r = $this->apps->_msg_response(1002);}
+				}else{ $this->r = $this->apps->_msg_response(1001);}
+			}else{ $this->r = $this->apps->_msg_response(1002);}
+		}else{ $this->r = $this->apps->_msg_response(1001);}
+		$this->response($this->r);
+	}
 	public function topup_post(){
 		if(!empty($this->_level)){
 			if(!empty($this->_role)){

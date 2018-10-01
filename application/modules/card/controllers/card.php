@@ -28,26 +28,36 @@ class Card extends REST_Controller {
 										if(!empty($p->card_code)){
 											if(!empty($p->card_type)){
 												if(!empty($p->card_amount)){
-													$this->reseller = $this->apps->_token_reseller($p->token);
-													$this->param['card_seri'] = $p->card_seri;
-													$this->param['card_code'] = $p->card_code;
-													$this->param['card_type'] = $p->card_type;
-													$this->param['card_amount'] = $p->card_amount;
-													$this->param['reseller'] = $this->reseller;
-													if(!empty($p->client_id)){ $client_id = $p->client_id;}else{ $client_id = $this->reseller;}
-													if(!empty($p->publisher)){ $publisher = $p->publisher;}else{ $publisher = null; }
-													$this->param['publisher'] = $publisher;
-													$this->param['client_id'] = $client_id; 
-													$this->param['time_tracking'] = time(); 
-													$check_seri = $this->check_seri($this->param);
-													if($check_seri==true){
-															$this->obj = $this->apps->_Service_Card_Change_Sendding($this->param);
-															$this->r = $this->apps->_msg_response(10000);
-															$this->r['result'] = $this->obj;
-													}else{ 
-														 $this->r = $this->apps->_msg_response(4026);
-													}
-												}else{ $this->r = $this->apps->_msg_response(4014);}
+												// if(!empty($p->card_amount)){
+												if(strlen($p->card_seri) > 9 ){
+													if(strlen($p->card_seri) < 18 ){
+														$this->reseller = $this->apps->_token_reseller($p->token);
+														$this->param['card_seri'] = $p->card_seri;
+														$this->param['card_code'] = $p->card_code;
+														$this->param['card_type'] = $p->card_type;
+														if( $p->card_type == 1){
+																$this->param['card_amount'] = $p->card_amount;
+														}else{
+																$this->param['card_amount'] = null;
+														}
+													
+														$this->param['reseller'] = $this->reseller;
+														if(!empty($p->client_id)){ $client_id = $p->client_id;}else{ $client_id = $this->reseller;}
+														if(!empty($p->publisher)){ $publisher = $p->publisher;}else{ $publisher = null; }
+														$this->param['publisher'] = $publisher;
+														$this->param['client_id'] = $client_id; 
+														$this->param['time_tracking'] = time(); 
+														$check_seri = $this->check_seri($this->param);
+														if($check_seri==true){
+																$this->obj = $this->apps->_Service_Card_Change_Sendding($this->param);
+																$this->r = $this->apps->_msg_response(10000);
+																$this->r['result'] = $this->obj;
+														}else{ 
+															 $this->r = $this->apps->_msg_response(4026);
+														}
+													// }else{ $this->r = $this->apps->_msg_response(4014);}
+													}else{ $this->r = $this->apps->_msg_response(2000);}
+												}else{ $this->r = $this->apps->_msg_response(2000);}
 											}else{ $this->r = $this->apps->_msg_response(4013);}
 										}else{ $this->r = $this->apps->_msg_response(4016);}
 									}else{ $this->r = $this->apps->_msg_response(4015);}
