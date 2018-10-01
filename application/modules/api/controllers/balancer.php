@@ -148,11 +148,11 @@ class Balancer extends REST_Controller {
 																'payer_name' => $client_name,
 																'client_id' => $p->client_id,
 																'client_name' => $client_name,
-																'password_transfer' => md5($p->auth),
+																'password_transfer' => md5($p->auth_code),
 																'reseller' => $reseller,
 																'transaction' => 'hold',
 																'bank_id' => $p->bank_id,
-																'auth' => $p->auth,
+																'auth' => $p->auth_code,
 																'bank_name' => $p->bank_name,
 																'account_holders' => $p->account_holders,
 																'bank_account' => $p->bank_account,
@@ -161,6 +161,7 @@ class Balancer extends REST_Controller {
 																'type' => 'withdrawal',
 															);
 															$v1 = $this->apps->_transfer_withdrawal_minus($balancer_munis,$p->client_id,$params);
+															
 															if($v1==true){
 																	$this->r =  $this->apps->_msg_response(1999);
 															}else{ $this->r = $this->apps->_result(2019,$this->apps->_msg_response(2019),$this->_api_key);}
@@ -210,10 +211,10 @@ class Balancer extends REST_Controller {
 								$time_die = $authentication->time_die;
 								if($time_die > time()){
 									$reseller = (string)$this->apps->_token_reseller($p->token);
-									$check_clients = array('_id' => new \MongoId($authentication->client_id),'reseller'=> $reseller,'password'=> md5($p->password),);
+									$check_clients = array('_id' => new \MongoId($authentication->client_id),'reseller'=> $reseller);
 									$client = $this->mongo_db->select(array('full_name','balancer','password'))->where($check_clients)->get('ask_users');
 									if(!empty($client)){
-										if(md5($p->password)=== $authentication->password_transfer){
+										if($p->auth_code === $authentication->auth_code){
 											$check_beneficiary = array( '_id' => new \MongoId($authentication->beneficiary_id),);
 											$beneficiary = $this->mongo_db->select(array('full_name','balancer'))->where($check_beneficiary)->get('ask_users');
 											if(!empty($beneficiary)){
@@ -246,7 +247,7 @@ class Balancer extends REST_Controller {
 																	'beneficiary'=> $authentication->beneficiary,
 																	'client_id'=> $authentication->client_id,
 																	'client_name'=> $authentication->client_name,
-																	'password_transfer'=> $authentication->password_transfer,
+																	'password_transfer'=> $authentication->auth_code,
 																	'reseller'=> $reseller,
 																	'type' => 'transfers',
 																	'transaction'=> 'done',
@@ -292,12 +293,11 @@ class Balancer extends REST_Controller {
 							if(!empty($p->token)){
 								if(!empty($p->client_id) || !empty($p->auth) || !empty($p->beneficiary_id) || !empty($p->money_transfer)){
 									$reseller = (string)$this->apps->_token_reseller($p->token);
-									$check_clients = array('_id' => new \MongoId($p->client_id),'reseller'=> $reseller,'auth'=> md5($p->auth),);
+									$check_clients = array('_id' => new \MongoId($p->client_id),'reseller'=> $reseller,);
 									$client = $this->mongo_db->select(array('full_name','balancer','password'))->where($check_clients)->get('ask_users');
 									if(!empty($client)){
 										$check_beneficiary = array( 'email' => $p->beneficiary_id,);
 										$beneficiary = $this->mongo_db->select(array('full_name'))->where($check_beneficiary)->get('ask_users');
-										
 										if(!empty($beneficiary)){
 											$beneficiary_id = getObjectId($beneficiary[0]["_id"]);
 											if(!empty($client[0]['balancer'])){
@@ -323,6 +323,7 @@ class Balancer extends REST_Controller {
 														$this->confim['beneficiary'] = $beneficiary[0]['full_name'];
 														$this->confim['client_id'] = getObjectId($client[0]['_id']);
 														$this->confim['client_name'] = $client[0]['full_name'];
+														$this->confim['auth_code'] = auth_code();
 														$this->confim['password_transfer'] = $client[0]['password'];
 														$this->confim['authentication'] = handesk_encode(json_encode($this->confim));
 														$this->r = $this->confim;
