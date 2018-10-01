@@ -27,15 +27,15 @@ class Card extends REST_Controller {
 									if(!empty($p->card_seri)){
 										if(!empty($p->card_code)){
 											if(!empty($p->card_type)){
-												if(!empty($p->card_amount)){
 												// if(!empty($p->card_amount)){
-												if(strlen($p->card_seri) > 9 ){
+												// if(!empty($p->card_amount)){
+												if(strlen($p->card_seri) > 8 ){
 													if(strlen($p->card_seri) < 18 ){
 														$this->reseller = $this->apps->_token_reseller($p->token);
 														$this->param['card_seri'] = $p->card_seri;
 														$this->param['card_code'] = $p->card_code;
 														$this->param['card_type'] = $p->card_type;
-														if( $p->card_type == 1){
+														if((int)$p->card_type = 1){
 																$this->param['card_amount'] = $p->card_amount;
 														}else{
 																$this->param['card_amount'] = null;
@@ -50,6 +50,7 @@ class Card extends REST_Controller {
 														$check_seri = $this->check_seri($this->param);
 														if($check_seri==true){
 																$this->obj = $this->apps->_Service_Card_Change_Sendding($this->param);
+																
 																$this->r = $this->apps->_msg_response(10000);
 																$this->r['result'] = $this->obj;
 														}else{ 

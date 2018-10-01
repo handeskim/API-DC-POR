@@ -562,7 +562,15 @@ class Core extends MY_Controller {
 		if(!empty($p['card_seri'])){ $this->card_change['card_seri'] = $p['card_seri']; }else{ $this->card_change['card_seri'] = 1;}
 		if(!empty($p['card_code'])){ $this->card_change['card_code'] = $p['card_code']; }else{ $this->card_change['card_code'] = 1;}
 		if(!empty($p['card_type'])){ $this->card_change['card_type'] = $p['card_type']; }else{ $this->card_change['card_type'] = 1;}
-		if(!empty($p['card_amount'])){ $this->card_change['card_amount'] = (int)$p['card_amount']; }else{ $this->card_change['card_amount'] = 1;}
+		if(!empty($p['card_amount'])){ 
+			if((int)$this->card_change['card_type'] = 1){
+				$this->card_change['card_amount'] = (int)$p['card_amount']; 
+			}else{
+				$this->card_change['card_amount'] = null;
+			}
+		}else{ 
+			$this->card_change['card_amount'] = null;
+		}
 	
 		$note = $this->_doithe_transaction_create($p);
 		$this->card_change['note'] = $note;

@@ -322,6 +322,7 @@ class User extends REST_Controller {
 													'full_name'=> $p->full_name,
 													'address'=> $address,
 													'city'=> $city,
+													'type' => "Member",
 													'country'=> $country,
 													'balancer'=> 0,
 													'birthday'=> $birthday,
