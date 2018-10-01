@@ -81,7 +81,7 @@ class Staff_cms extends REST_Controller {
 					}else{
 						$status = true;
 					}
-					$this->result = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set(array('status'=>$status))->update('ask_users');
+					$this->result = $this->mongo_db->where(array('_id' => new \MongoId($p->keys)))->set(array('status'=>$status,'type'=>$p->type))->update('ask_users');
 					$this->r = array( 'status'=> true, 'result'=> $this->result);
 					$this->response($this->r);
 			}
@@ -184,6 +184,7 @@ class Staff_cms extends REST_Controller {
 										// if(!empty($v['client_id'])){ $client_id = $v['client_id'];}else{$client_id = null;}
 										if(!empty($v['phone'])){ $phone = $v['phone'];}else{$phone = null;}
 										if(!empty($v['email'])){ $email = $v['email'];}else{$email = null;}
+										if(!empty($v['type'])){ $type = $v['type'];}else{$type = null;}
 										if(!empty($v['username'])){ $username = $v['username'];}else{$username = null;}
 										if(!empty($v['full_name'])){ $full_name = $v['full_name'];}else{$full_name = null;}
 										if(!empty($v['address'])){ $address = $v['address'];}else{$address = null;}
@@ -199,6 +200,7 @@ class Staff_cms extends REST_Controller {
 											'client_id' => getObjectId($v['_id']),
 											'reseller'=> $v_reseller,
 											'email' => $email,
+											'type' => $type,
 											'username' => $username,
 											'phone'=> $phone,
 											'full_name'=> $full_name,

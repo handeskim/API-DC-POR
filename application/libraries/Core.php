@@ -580,11 +580,11 @@ class Core extends MY_Controller {
 		////////////////Card Insert////////////////
 		if(!empty($p['card_type'])){$type = $p['card_type'];}else{$type = 1;}
 		/////////////// Card Fee ///////////////////
-		$card_fee = $this->_card_fee($type);
+		$card_fee = $this->_card_fee_change($type,$p['client_id']);
 		if(!empty($card_fee)){
 			$card_deduct = (int)$card_fee['deduct'];
-			$card_rose = (int)$card_fee['rose'];
-		}else{ $card_deduct = 0; $card_rose = 0; }
+			$card_rose = 0;
+		}else{ $card_deduct = 99; $card_rose = 0; }
 	
 		/////////////////////////////////////////////
 		$this->objects['tracking'] = $note;
@@ -713,7 +713,7 @@ class Core extends MY_Controller {
 		}catch (Exception $e) { $this->obj_core; }
 		return $this->obj_core;
 	}
-	public function _card_fee($type){
+		public function _card_fee($type){
 			try{
 			$objects = $this->mongo_db->where(array('card_type'=> (int)$type,))->get('card');
 			if(!empty($objects)){
@@ -721,6 +721,27 @@ class Core extends MY_Controller {
 			}
 		}catch (Exception $e) {
 			return array();
+		}
+		
+	}
+	public function _card_fee_change($type,$client_id){
+			try{
+			$clients = $this->mongo_db->where(array('_id' => new \MongoId($client_id)))->get('ask_users');
+			if(!empty($clients)){
+				if(isset($clients[0]['type'])){
+					$objects = $this->mongo_db->where(array('card_type'=> (int)$type,))->get('card');
+					if(!empty($objects)){
+						if($clients[0]['type']==='VIP'){
+							return (int)$objects[0]['deduct_vip'];
+						}else{
+							return (int)$objects[0]['deduct'];
+						}
+					}
+				}else{return 99;}
+			}else{ return 99;}
+			
+		}catch (Exception $e) {
+			return 99;
 		}
 		
 	}
