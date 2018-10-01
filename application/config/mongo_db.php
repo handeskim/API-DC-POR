@@ -3,8 +3,8 @@
 $primary = '127.0.0.1';
 $secondary = '127.0.0.1'; 
 $username = "root";
-$password = "1234fF@#@@";
-$database = "db_doicard";
+$password = "";
+$database = "";
 $port = "port";
 $dns = 'mongodb://'.$primary.':'.$port.'/'.$database;
 try{
